@@ -9,7 +9,7 @@ Requires python in the base project.
 
 ## Install and information
 
-This tool is meant to used from within another python based project. 
+This tool is meant to be used from within another python based project. 
 Therefore you should add add this tool as a submodule to your git project in the base git directory using 
 
 ```console
