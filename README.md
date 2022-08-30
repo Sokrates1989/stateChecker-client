@@ -20,6 +20,23 @@ See https://git-scm.com/book/en/v2/Git-Tools-Submodules
 
 ## Preparation for usage
 
+### Edit config
+
+Rename config.txt.template to config.txt
+
+```
+root
+├── yourCodeBase
+│   ├── file_to_import_tool_from.py
+│   └── ..
+├── stateChecker-client
+│   ├── config.txt
+│   ├── config.txt.template
+│   └── ..
+└── ..
+```
+
+
 ### Add the install directory to your python imports 
 
 ```python
@@ -31,12 +48,14 @@ sys.path.insert(1, os.path.join(os.path.dirname(__file__), "path/",  "to/", "sta
 ```
 If your code structure is like below and you want to import this tool from file_to_import_tool_from.py, you may use the snippet below the folder structure example.
 
+```
 root
 ├── yourCodeBase
 │   ├── file_to_import_tool_from.py
 │   └── ..
 ├── stateChecker-client
 └── ..
+```
 
 ```python
 # Import submodules.
@@ -53,21 +72,6 @@ sys.path.insert(1, os.path.join(os.path.dirname(__file__), "..", "stateChecker-c
 # Import stateChecker-client.
 import dockerStateCheckerClient as StateCheckerClient
 ```
-
-
-### Edit config
-
-Rename config.txt.template to config.txt
-
-root
-├── yourCodeBase
-│   ├── file_to_import_tool_from.py
-│   └── ..
-├── stateChecker-client
-│   ├── config.txt
-│   ├── config.txt.template
-│   └── ..
-└── ..
 
 
 
