@@ -85,3 +85,21 @@ import stateCheckerClient as StateCheckerClient
 
 
 ## Usage
+
+
+If you only have to use one state check for your tool (common):
+
+```python
+stateChecker = StateCheckerClient.StateCheckerClient()
+stateChecker.start()
+```
+
+If your tool consists of multiple parts that each require an individual state check:
+```python
+stateChecker = StateCheckerClient.StateCheckerClient(0)
+stateChecker.start()
+```
+```python
+stateChecker = StateCheckerClient.StateCheckerClient(1)
+stateChecker.start()
+```
