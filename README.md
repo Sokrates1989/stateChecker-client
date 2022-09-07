@@ -5,7 +5,7 @@ Use https://github.com/Sokrates1989/docker-stateChecker as server
 
 ## Requirements
 
-Requires python in the base project.
+Requires python, pyTelegramBotApi and git to be used in the base project.
 
 ## Install and information
 
@@ -22,7 +22,11 @@ See https://git-scm.com/book/en/v2/Git-Tools-Submodules
 
 ### Edit config
 
+If you only have to use one state check for your tool (common):
 Rename config.txt.template to config.txt
+
+If your tool consists of multiple parts that each require an individual state check:
+Rename config.txt.multiple_checks_template to config.txt
 
 ```
 root
@@ -32,10 +36,14 @@ root
 ├── stateChecker-client
 │   ├── config.txt
 │   ├── config.txt.template
+│   ├── config.txt.multiple_checks_template
 │   └── ..
 └── ..
 ```
 
+Create a new token (just a random long string), that serves as your authentication.
+Could use: https://onlinerandomtools.com/generate-random-string
+!!! IMPORTANT: If you loose this, you cannot update, nor delete your state_checks any more !!!
 
 ### Add the install directory to your python imports 
 
@@ -46,6 +54,7 @@ import os
 import sys
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), "path/",  "to/", "stateChecker-client"))
 ```
+
 If your code structure is like below and you want to import this tool from file_to_import_tool_from.py, you may use the snippet below the folder structure example.
 
 ```
@@ -70,7 +79,7 @@ sys.path.insert(1, os.path.join(os.path.dirname(__file__), "..", "stateChecker-c
 
 ```python
 # Import stateChecker-client.
-import dockerStateCheckerClient as StateCheckerClient
+import stateCheckerClient as StateCheckerClient
 ```
 
 

@@ -1,0 +1,15 @@
+{
+	"telegram":
+	{
+		"botToken":"BotTokenTHeBOtFATHER GAVE TO YOU",
+		"errorChatID":"-XXXXXXXXX",
+		"infoChatID":"-XXXXXXXXX"
+	},
+	"toolsToCheck":
+	{
+		"name": "tool",
+		"description": "descriptionfortool",
+		"token": "tokenfortool",
+		"stateCheckFrequency_inMinutes": 60
+	}
+}
