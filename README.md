@@ -82,6 +82,23 @@ sys.path.insert(1, os.path.join(os.path.dirname(__file__), "..", "stateChecker-c
 import stateCheckerClient as StateCheckerClient
 ```
 
+```
+
+
+## If you have a dev/live implementation
+
+if you go live for the first time, you might have to remove submodule once and delete the submodule directory manually
+
+```
+git rm -r --cached stateChecker-client
+```
+
+remeber to also delete the directory stateChecker-client, then readd submodule as done in ##Install and information
+
+```
+git submodule add https://github.com/Sokrates1989/stateChecker-client.git
+```
+
 
 
 ## Usage
