@@ -40,7 +40,7 @@ class StateCheckerClient(Thread):
 		if isinstance(config_array["toolsToCheck"], collections.abc.Sequence):
 
 			# Is backup file check?
-			if config_array["toolsToCheck"][self.multipleConfigArrayIdentifier]["isBackupFileCheck"]:
+			if "isBackupFileCheck" in config_array["toolsToCheck"][self.multipleConfigArrayIdentifier]:
 				if str(config_array["toolsToCheck"][self.multipleConfigArrayIdentifier]["isBackupFileCheck"]).lower() == "true":
 					self.url = "https://statechecker.felicitas-wisdom.com/v1/backupcheck"
 					self.isBackupCheck = True
@@ -66,7 +66,7 @@ class StateCheckerClient(Thread):
 		else:
 
 			# Is backup file check?
-			if config_array["toolsToCheck"]["isBackupFileCheck"]:
+			if "isBackupFileCheck" in config_array["toolsToCheck"][self.multipleConfigArrayIdentifier]:
 				if str(config_array["toolsToCheck"]["isBackupFileCheck"]).lower() == "true":
 					self.url = "https://statechecker.felicitas-wisdom.com/v1/backupcheck"
 					self.isBackupCheck = True
