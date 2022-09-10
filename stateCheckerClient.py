@@ -66,7 +66,7 @@ class StateCheckerClient(Thread):
 		else:
 
 			# Is backup file check?
-			if "isBackupFileCheck" in config_array["toolsToCheck"][self.multipleConfigArrayIdentifier]:
+			if "isBackupFileCheck" in config_array["toolsToCheck"]:
 				if str(config_array["toolsToCheck"]["isBackupFileCheck"]).lower() == "true":
 					self.url = "https://statechecker.felicitas-wisdom.com/v1/backupcheck"
 					self.isBackupCheck = True
