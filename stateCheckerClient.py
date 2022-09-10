@@ -32,24 +32,50 @@ class StateCheckerClient(Thread):
 		Thread.__init__(self)
 		self.daemon = True
 		self.running = True
+		self.multipleConfigArrayIdentifier = multipleConfigArrayIdentifier
 		self.sentApiIsDownMessage = False
 		self.url = "https://statechecker.felicitas-wisdom.com/v1/statecheck"
 
 		# Does config support multiple instantiations?
 		if isinstance(config_array["toolsToCheck"], collections.abc.Sequence):
+
+			# Is backup file check?
+			if config_array["toolsToCheck"][self.multipleConfigArrayIdentifier]["isBackupFileCheck"]:
+				if str(config_array["toolsToCheck"][self.multipleConfigArrayIdentifier]["isBackupFileCheck"]).lower() == "true":
+					self.url = "https://statechecker.felicitas-wisdom.com/v1/backupcheck"
+					self.isBackupCheck = True
+					self.running = False
+				else:
+					self.isBackupCheck = False
+			else:
+				self.isBackupCheck = False
+
+
 			self.postContent = {
-				"name": config_array["toolsToCheck"][multipleConfigArrayIdentifier]["name"],
-				"description": config_array["toolsToCheck"][multipleConfigArrayIdentifier]["description"],
-				"token": config_array["toolsToCheck"][multipleConfigArrayIdentifier]["token"],
-				"stateCheckFrequency_inMinutes": config_array["toolsToCheck"][multipleConfigArrayIdentifier]["stateCheckFrequency_inMinutes"]
+				"name": config_array["toolsToCheck"][self.multipleConfigArrayIdentifier]["name"],
+				"description": config_array["toolsToCheck"][self.multipleConfigArrayIdentifier]["description"],
+				"token": config_array["toolsToCheck"][self.multipleConfigArrayIdentifier]["token"],
+				"stateCheckFrequency_inMinutes": config_array["toolsToCheck"][self.multipleConfigArrayIdentifier]["stateCheckFrequency_inMinutes"]
 			}
-			self.name = config_array["toolsToCheck"][multipleConfigArrayIdentifier]["name"]
+			self.name = config_array["toolsToCheck"][self.multipleConfigArrayIdentifier]["name"]
 			# Ensure state is sent often enough and amount minutes is positive.
-			contactApiEveryXMinutes = int(config_array["toolsToCheck"][multipleConfigArrayIdentifier]["stateCheckFrequency_inMinutes"]) - 1
+			contactApiEveryXMinutes = int(config_array["toolsToCheck"][self.multipleConfigArrayIdentifier]["stateCheckFrequency_inMinutes"]) - 1
 			if contactApiEveryXMinutes < 1:
 				contactApiEveryXMinutes = 1
 			self.contactApiEveryXSeconds = contactApiEveryXMinutes * 60
 		else:
+
+			# Is backup file check?
+			if config_array["toolsToCheck"]["isBackupFileCheck"]:
+				if str(config_array["toolsToCheck"]["isBackupFileCheck"]).lower() == "true":
+					self.url = "https://statechecker.felicitas-wisdom.com/v1/backupcheck"
+					self.isBackupCheck = True
+					self.running = False
+				else:
+					self.isBackupCheck = False
+			else:
+				self.isBackupCheck = False
+
 			self.postContent = {
 				"name": config_array["toolsToCheck"]["name"],
 				"description": config_array["toolsToCheck"]["description"],
@@ -74,19 +100,20 @@ class StateCheckerClient(Thread):
 
 
 	def pingApi(self):
-		x = requests.post(self.url, json = self.postContent)
+		response = requests.post(self.url, json = self.postContent)
 		# Did contacting the API work?
-		if x.status_code == 200:
+		if response.status_code == 200:
 			self.sendApiIsUpAgainMessage()
 		else:
-			self.sendApiIsDownMessage()
+			self.sendApiIsDownMessage(response)
 
 
-	def sendApiIsDownMessage(self):
+	def sendApiIsDownMessage(self, response):
 		if self.sentApiIsDownMessage == False:
 			# Send Api is down message.
 			msg = "API is <b>DOWN!</b>\n\n"
 			msg += "Tool <b>" + self.name + "</b> cannot contact api at " + self.url
+			msg += "\n" + str(response.status_code) + " " + str(response.reason)
 			bot.send_message(errorChatID, msg)
 			self.sentApiIsDownMessage = True
 
@@ -99,3 +126,40 @@ class StateCheckerClient(Thread):
 			bot.send_message(errorChatID, msg)
 			self.sentApiIsDownMessage = False
 
+
+
+	def updateBackupFile(self, backupFileHash, backupFileCreationTimestamp):
+
+		# Does config support multiple instantiations?
+		if isinstance(config_array["toolsToCheck"], collections.abc.Sequence):
+			self.postContent = {
+				"name": config_array["toolsToCheck"][self.multipleConfigArrayIdentifier]["name"],
+				"description": config_array["toolsToCheck"][self.multipleConfigArrayIdentifier]["description"],
+				"token": config_array["toolsToCheck"][self.multipleConfigArrayIdentifier]["token"],
+				"stateCheckFrequency_inMinutes": config_array["toolsToCheck"][self.multipleConfigArrayIdentifier]["stateCheckFrequency_inMinutes"],
+				"mostRecentBackupFile_creationDate": str(backupFileCreationTimestamp),
+				"mostRecentBackupFile_hash": str(backupFileHash)
+			}
+		else:
+			self.postContent = {
+				"name": config_array["toolsToCheck"]["name"],
+				"description": config_array["toolsToCheck"]["description"],
+				"token": config_array["toolsToCheck"]["token"],
+				"stateCheckFrequency_inMinutes": config_array["toolsToCheck"]["stateCheckFrequency_inMinutes"],
+				"mostRecentBackupFile_creationDate": str(backupFileCreationTimestamp),
+				"mostRecentBackupFile_hash": str(backupFileHash)
+			}
+
+		response = requests.post(self.url, json = self.postContent)
+		# Did contacting the API work?
+		if response.status_code == 200:
+			self.sendApiIsUpAgainMessage()
+		else:
+			self.sendApiIsDownMessage(response)
+
+
+	def sendNoBackupFileMessage(self):
+		# Send Api is down message.
+		msg = "There is no backup file\n\n"
+		msg += "Tool <b>" + self.name + "</b> could not find any backup file"
+		bot.send_message(errorChatID, msg)

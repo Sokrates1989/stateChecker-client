@@ -10,6 +10,7 @@
 		"name": "tool",
 		"description": "descriptionfortool",
 		"token": "tokenfortool",
-		"stateCheckFrequency_inMinutes": 60
+		"stateCheckFrequency_inMinutes": 60,
+		"isBackupFileCheck" : "True/False"
 	}
 }

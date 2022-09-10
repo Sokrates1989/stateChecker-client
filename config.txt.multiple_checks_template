@@ -11,13 +11,15 @@
 			"name": "tool0",
 			"description": "descriptionfortool0",
 			"token": "tokenfortool0",
-			"stateCheckFrequency_inMinutes": 60
+			"stateCheckFrequency_inMinutes": 60,
+			"isBackupFileCheck" : "True/False"
 		},
 		{
 			"name": "tool1",
 			"description": "descriptionfortool1",
 			"token": "tokenfortool1",
-			"stateCheckFrequency_inMinutes": 60
+			"stateCheckFrequency_inMinutes": 60,
+			"isBackupFileCheck" : "True/False"
 		}
 	]
 }

@@ -101,6 +101,9 @@ git submodule add https://github.com/Sokrates1989/stateChecker-client.git
 
 ## Usage
 
+### StateCheck
+
+This will run on a seperate Thread will your tool is running and send frequent pings to to server to tell it, that the tool is working.
 
 If you only have to use one state check for your tool (common):
 
@@ -117,4 +120,26 @@ stateChecker.start()
 ```python
 stateChecker = StateCheckerClient.StateCheckerClient(1)
 stateChecker.start()
+```
+
+
+### Backup
+
+This will update the previous backup file hash and timestamp once.
+
+If you only have to use one state check for your tool (common):
+
+```python
+stateChecker = StateCheckerClient.StateCheckerClient()
+stateChecker.updateBackupFile(backupFileHash, backupFileCreationTimestamp)
+```
+
+If your tool consists of multiple parts that each require an individual state check:
+```python
+stateChecker = StateCheckerClient.StateCheckerClient(0)
+stateChecker.updateBackupFile(backupFileHash, backupFileCreationTimestamp)
+```
+```python
+stateChecker = StateCheckerClient.StateCheckerClient(1)
+stateChecker.updateBackupFile(backupFileHash, backupFileCreationTimestamp)
 ```
