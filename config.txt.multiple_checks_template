@@ -1,4 +1,9 @@
 {
+	"server":
+	{
+		"stateCheckUrl":"https://statechecker.domain.com/v1/statecheck",
+		"backupcheckUrl":"https://statechecker.domain.com/v1/backupcheck"
+	},
 	"telegram":
 	{
 		"botToken":"BotTokenTHeBOtFATHER GAVE TO YOU",

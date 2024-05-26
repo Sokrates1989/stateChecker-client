@@ -26,6 +26,10 @@ bot = telebot.TeleBot(botToken, parse_mode="HTML")
 errorChatID = config_array["telegram"]["errorChatID"]
 infoChatID = config_array["telegram"]["infoChatID"]
 
+# Server.
+server_state_check_url = config_array["server"]["stateCheckUrl"]
+server_backup_check_url = config_array["server"]["backupcheckUrl"]
+
 class StateCheckerClient(Thread):
 
 	def __init__(self, multipleConfigArrayIdentifier = 0):
@@ -34,7 +38,7 @@ class StateCheckerClient(Thread):
 		self.running = True
 		self.multipleConfigArrayIdentifier = multipleConfigArrayIdentifier
 		self.sentApiIsDownMessage = False
-		self.url = "https://statechecker.felicitas-wisdom.com/v1/statecheck"
+		self.url = server_state_check_url
 
 		# Does config support multiple instantiations?
 		if isinstance(config_array["toolsToCheck"], collections.abc.Sequence):
@@ -42,7 +46,7 @@ class StateCheckerClient(Thread):
 			# Is backup file check?
 			if "isBackupFileCheck" in config_array["toolsToCheck"][self.multipleConfigArrayIdentifier]:
 				if str(config_array["toolsToCheck"][self.multipleConfigArrayIdentifier]["isBackupFileCheck"]).lower() == "true":
-					self.url = "https://statechecker.felicitas-wisdom.com/v1/backupcheck"
+					self.url = server_backup_check_url
 					self.isBackupCheck = True
 					self.running = False
 				else:
@@ -68,7 +72,7 @@ class StateCheckerClient(Thread):
 			# Is backup file check?
 			if "isBackupFileCheck" in config_array["toolsToCheck"]:
 				if str(config_array["toolsToCheck"]["isBackupFileCheck"]).lower() == "true":
-					self.url = "https://statechecker.felicitas-wisdom.com/v1/backupcheck"
+					self.url = server_backup_check_url
 					self.isBackupCheck = True
 					self.running = False
 				else:
