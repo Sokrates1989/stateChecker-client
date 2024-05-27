@@ -20,7 +20,29 @@ See https://git-scm.com/book/en/v2/Git-Tools-Submodules
 
 ## Preparation for usage
 
-### Edit config
+### Option 1: Using environment vars
+
+Set up environemnt vars as described in [Multiple Tools Environment Var Usage](#multiple-tools-environment-var-usage) 
+
+#### example
+```yml
+version: "3.9"
+services:
+  your-service:
+    image: your-image-containing-stateChecker-client
+    environment:
+      ...
+      # State Checker.
+      STATECHECKER_IS_BACKUP_FILE_CHECK: "False"
+      STATECHECKER_TOOL_NAME: "Tool-Name"
+      STATECHECKER_TOOL_DESCRIPTION: "Description for your tool"
+      STATECHECKER_TOOL_TOKEN: "TOKEN"
+      STATECHECKER_TOOL_TOKEN_FILE: "/run/secrets/SECRET_NAME"
+      STATECHECKER_TOOL_FREQUENCY_IN_MINUTES: "1"
+      ...
+```
+
+### Option 2: Using config
 
 If you only have to use one state check for your tool (common):
 Rename config.txt.template to config.txt
@@ -40,6 +62,9 @@ root
 │   └── ..
 └── ..
 ```
+
+
+### Create Tool Token
 
 Create a new token (just a random long string), that serves as your authentication.
 Could use: https://onlinerandomtools.com/generate-random-string
