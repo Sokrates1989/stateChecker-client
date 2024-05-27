@@ -34,33 +34,28 @@ class StateCheckerClient(Thread):
         except Exception:
             self._is_config_available = False
 
+        # Bot token.
+        self._botToken = "None"
+        try:
+            STATECHECKER_TELEGRAM_BOT_TOKEN_File = os.getenv("STATECHECKER_TELEGRAM_BOT_TOKEN_File")
+            with open(f"{STATECHECKER_TELEGRAM_BOT_TOKEN_File}", "r") as bot_token_file:
+                self._botToken = bot_token_file.read().strip()
+        except:
+            pass
+        finally:
+            # In case of an error or the secret is not set.
+            if self._botToken.lower() == "none":
+                self._botToken = os.getenv('STATECHECKER_TELEGRAM_BOT_TOKEN').strip().strip("\"")
+        if self._botToken.lower() == "none":
+            if self._is_config_available:
+                self._botToken = self._config_array["telegram"]["botToken"]
+
         # Initialize telegram specific values.
         if self._is_config_available:
-            try:
-                EMAIL_SENDER_PASSWORD_FILE = os.getenv("EMAIL_SENDER_PASSWORD_FILE")
-                with open(f"{EMAIL_SENDER_PASSWORD_FILE}", "r") as email_sender_password_file:
-                    self._sender["password"] = email_sender_password_file.read().strip()
-                    
-                    # Log that bot token was taken from secret file, if it holds potentially valid information.
-                    if self._sender["password"].lower() != "none":
-                        verbose_info_messages.append(f"EmailUtils: Email sender password taken from secret file.")
-                    
-            except:
-                pass
-            finally:
-                # In case of an error or the secret is not set.
-                if not "password" in self._sender or self._sender["password"].lower() == "none":
-                    self._sender["password"] = os.getenv('EMAIL_SENDER_PASSWORD').strip().strip("\"")
-                    warning_messages.append(f"EmailUtils: Email sender password taken from .env. Please use secret instead")
-            if not "password" in self._sender or not self._sender["password"]:
-                warning_messages.append(f"EmailUtils: No Password for Email sender provided. Disabling Email status messages.")
-                self._email_enabled = False
-            self._botToken = os.getenv("STATECHECKER_TELEGRAM_BOT_TOKEN") or self._config_array["telegram"]["botToken"]
             self._bot = telebot.TeleBot(self._botToken, parse_mode="HTML")
             self._errorChatID = os.getenv("STATECHECKER_TELEGRAM_ERROR_CHAT_ID") or self._config_array["telegram"]["errorChatID"]
             self._infoChatID = os.getenv("STATECHECKER_TELEGRAM_INFO_CHAT_ID") or self._config_array["telegram"]["infoChatID"]
         else:
-            self._botToken = os.getenv("STATECHECKER_TELEGRAM_BOT_TOKEN")
             self._bot = telebot.TeleBot(self._botToken, parse_mode="HTML")
             self._errorChatID = os.getenv("STATECHECKER_TELEGRAM_ERROR_CHAT_ID")
             self._infoChatID = os.getenv("STATECHECKER_TELEGRAM_INFO_CHAT_ID")
@@ -75,7 +70,7 @@ class StateCheckerClient(Thread):
             self._server_backup_check_url = os.getenv("STATECHECKER_SERVER_BACKUP_CHECK_URL")
             self._url = self._server_state_check_url
 
-        # Are there multiple environemnt var tools to check?
+        # Are there multiple environment var tools to check?
         self._are_there_multiple_environment_tools_to_check = False
         if os.getenv("STATECHECKER_TOOL_NAME_1"):
                 self._are_there_multiple_environment_tools_to_check = True
@@ -89,23 +84,37 @@ class StateCheckerClient(Thread):
                 ENV_VAR_TOOL_NAME = f"STATECHECKER_TOOL_NAME_{self._multiple_tools_tool_identifier}"
                 ENV_VAR_TOOL_DESCRIPTION = f"STATECHECKER_TOOL_DESCRIPTION_{self._multiple_tools_tool_identifier}"
                 ENV_VAR_TOOL_TOKEN = f"STATECHECKER_TOOL_TOKEN_{self._multiple_tools_tool_identifier}"
+                ENV_VAR_TOOL_TOKEN_FILE = f"STATECHECKER_TOOL_TOKEN_FILE_{self._multiple_tools_tool_identifier}"
                 ENV_VAR_TOOL_FREQUENCY_IN_MINUTES = f"STATECHECKER_TOOL_FREQUENCY_IN_MINUTES_{self._multiple_tools_tool_identifier}"
         if is_first_tool:
             ENV_VAR_IS_BACKUP_FILE_CHECK = "STATECHECKER_IS_BACKUP_FILE_CHECK"
             ENV_VAR_TOOL_NAME = "STATECHECKER_TOOL_NAME"
             ENV_VAR_TOOL_DESCRIPTION = "STATECHECKER_TOOL_DESCRIPTION"
             ENV_VAR_TOOL_TOKEN = "STATECHECKER_TOOL_TOKEN"
+            ENV_VAR_TOOL_TOKEN_FILE = "STATECHECKER_TOOL_TOKEN_FILE"
             ENV_VAR_TOOL_FREQUENCY_IN_MINUTES = "STATECHECKER_TOOL_FREQUENCY_IN_MINUTES"
 
         # Get settings of environment vars.
         tool_is_set_from_env = False
-        if os.getenv(ENV_VAR_IS_BACKUP_FILE_CHECK) and os.getenv(ENV_VAR_TOOL_NAME) and os.getenv(ENV_VAR_TOOL_DESCRIPTION) and os.getenv(ENV_VAR_TOOL_TOKEN) and os.getenv(ENV_VAR_TOOL_FREQUENCY_IN_MINUTES):
+        if os.getenv(ENV_VAR_IS_BACKUP_FILE_CHECK) and os.getenv(ENV_VAR_TOOL_NAME) and os.getenv(ENV_VAR_TOOL_DESCRIPTION) and (os.getenv(ENV_VAR_TOOL_TOKEN) or os.getenv(ENV_VAR_TOOL_TOKEN_FILE)) and os.getenv(ENV_VAR_TOOL_FREQUENCY_IN_MINUTES):
             tool_is_set_from_env = True
             self._is_backup_file_check = str(os.getenv(ENV_VAR_IS_BACKUP_FILE_CHECK)).lower() == "true"
             self._tool_name = str(os.getenv(ENV_VAR_TOOL_NAME))
             self._tool_description = str(os.getenv(ENV_VAR_TOOL_DESCRIPTION))
             self._tool_token = str(os.getenv(ENV_VAR_TOOL_TOKEN))
             self._tool_check_frequency_in_minutes = int(os.getenv(ENV_VAR_TOOL_FREQUENCY_IN_MINUTES))
+
+            self._tool_token = "None"
+            try:
+                STATECHECKER_TELEGRAM_BOT_TOKEN_File = os.getenv(ENV_VAR_TOOL_TOKEN_FILE)
+                with open(f"{STATECHECKER_TELEGRAM_BOT_TOKEN_File}", "r") as bot_token_file:
+                    self._tool_token = bot_token_file.read().strip()
+            except:
+                pass
+            finally:
+                # In case of an error or the secret is not set.
+                if self._tool_token.lower() == "none":
+                    self._tool_token = os.getenv(ENV_VAR_TOOL_TOKEN).strip().strip("\"")
 
 
         # If tool could not be set from env vars use config.
