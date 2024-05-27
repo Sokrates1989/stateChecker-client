@@ -103,6 +103,7 @@ git submodule add https://github.com/Sokrates1989/stateChecker-client.git
 
 ### StateCheck
 
+#### Continous checking
 This will run on a seperate Thread will your tool is running and send frequent pings to to server to tell it, that the tool is working.
 
 If you only have to use one state check for your tool (common):
@@ -120,6 +121,27 @@ stateChecker.start()
 ```python
 stateChecker = StateCheckerClient.StateCheckerClient(1)
 stateChecker.start()
+```
+
+#### Single server call
+
+This will call the statecheker server once. This is the usage of choice, if the base tool is being run on some kind of routine, e.g. cronjobs.
+
+If you only have to use one state check for your tool (common):
+
+```python
+stateChecker = StateCheckerClient.StateCheckerClient()
+stateChecker.indicate_tool_is_up_once()
+```
+
+If your tool consists of multiple parts that each require an individual state check:
+```python
+stateChecker = StateCheckerClient.StateCheckerClient(0)
+stateChecker.indicate_tool_is_up_once()
+```
+```python
+stateChecker = StateCheckerClient.StateCheckerClient(1)
+stateChecker.indicate_tool_is_up_once()
 ```
 
 
@@ -143,3 +165,37 @@ stateChecker.updateBackupFile(backupFileHash, backupFileCreationTimestamp)
 stateChecker = StateCheckerClient.StateCheckerClient(1)
 stateChecker.updateBackupFile(backupFileHash, backupFileCreationTimestamp)
 ```
+
+
+### Multiple Tools Environment Var Usage
+
+#### First or just one tool
+```
+"STATECHECKER_IS_BACKUP_FILE_CHECK"
+"STATECHECKER_TOOL_NAME"
+"STATECHECKER_TOOL_DESCRIPTION"
+"STATECHECKER_TOOL_TOKEN"
+"STATECHECKER_TOOL_FREQUENCY_IN_MINUTES"
+```
+
+#### Second tool
+```
+"STATECHECKER_IS_BACKUP_FILE_CHECK_1"
+"STATECHECKER_TOOL_NAME_1"
+"STATECHECKER_TOOL_DESCRIPTION_1"
+"STATECHECKER_TOOL_TOKEN_1"
+"STATECHECKER_TOOL_FREQUENCY_IN_MINUTES_1"
+```
+
+#### Third tool
+```
+"STATECHECKER_IS_BACKUP_FILE_CHECK_2"
+"STATECHECKER_TOOL_NAME_2"
+"STATECHECKER_TOOL_DESCRIPTION_2"
+"STATECHECKER_TOOL_TOKEN_2"
+"STATECHECKER_TOOL_FREQUENCY_IN_MINUTES_2"
+```
+
+
+#### More tools
+...
