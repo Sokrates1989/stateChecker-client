@@ -1,6 +1,7 @@
 {
 	"server":
 	{
+		"token":"Server Token authenticating every interaction with the api",
 		"stateCheckUrl":"https://statechecker.domain.com/v1/statecheck",
 		"backupcheckUrl":"https://statechecker.domain.com/v1/backupcheck"
 	},

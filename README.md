@@ -1,7 +1,7 @@
 # stateChecker-client
 Sends a post request to the stateChecker server to verify, that the tool is working. Also checks, if the server is up and running and sends a telegram message, if not.
 
-Use https://github.com/Sokrates1989/docker-stateChecker as server
+Use https://github.com/Sokrates1989/docker-stateChecker-server as server
 
 ## Requirements
 
@@ -67,8 +67,8 @@ root
 ### Create Tool Token
 
 Create a new token (just a random long string), that serves as your authentication.
-Could use: https://onlinerandomtools.com/generate-random-string
-!!! IMPORTANT: If you loose this, you cannot update, nor delete your state_checks any more !!!
+Could use: https://onlinerandomtools.com/generate-random-string or https://it-tools.tech/token-generator
+!!! IMPORTANT: If you lose this, you cannot update nor delete your state_checks any more !!!
 
 ### Add the install directory to your python imports 
 

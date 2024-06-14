@@ -60,8 +60,10 @@ class StateCheckerClient(Thread):
             self._errorChatID = os.getenv("STATECHECKER_TELEGRAM_ERROR_CHAT_ID")
             self._infoChatID = os.getenv("STATECHECKER_TELEGRAM_INFO_CHAT_ID")
 
-        # Initialize Server connection.
+        # Initialize Server connection and authentication.
+        self._server_auth_token = self._getServerAuthTokenFromEnvironment()
         if self._is_config_available:
+            self._server_auth_token = os.getenv("STATECHECKER_SERVER_AUTHENTICATION_TOKEN") or self._config_array["server"]["stateCheckUrl"]
             self._server_state_check_url = os.getenv("STATECHECKER_SERVER_STATE_CHECK_URL") or self._config_array["server"]["stateCheckUrl"]
             self._server_backup_check_url = os.getenv("STATECHECKER_SERVER_BACKUP_CHECK_URL") or self._config_array["server"]["backupcheckUrl"]
             self._url = self._server_state_check_url
@@ -159,6 +161,7 @@ class StateCheckerClient(Thread):
 
         # Create body for post api call.
         self._postContent = {
+            "server_auth_token": self._server_auth_token,
             "name": self._tool_name,
             "description": self._tool_description,
             "token": self._tool_token,
@@ -219,6 +222,7 @@ class StateCheckerClient(Thread):
     def updateBackupFile(self, backupFileHash, backupFileCreationTimestamp):
 
         self._postContent = {
+            "server_auth_token": self._server_auth_token,
             "name": self._tool_name,
             "description": self._tool_description,
             "token": self._tool_token,
@@ -241,3 +245,22 @@ class StateCheckerClient(Thread):
         msg = "There is no backup file\n\n"
         msg += "Tool <b>" + self._tool_name + "</b> could not find any backup file"
         self._bot.send_message(self._errorChatID, msg)
+
+        
+
+
+    def _getServerAuthTokenFromEnvironment(self):
+        server_auth_token = "None"
+        try:
+            STATECHECKER_SERVER_AUTHENTICATION_TOKEN_FILE = os.getenv("STATECHECKER_SERVER_AUTHENTICATION_TOKEN_FILE")
+            with open(f"{STATECHECKER_SERVER_AUTHENTICATION_TOKEN_FILE}", "r") as auth_token_file:
+                server_auth_token = auth_token_file.read().strip()
+        except:
+            pass
+        finally:
+            # In case of an error or the secret is not set.
+            if server_auth_token.lower() == "none":
+                server_auth_token = os.getenv('STATECHECKER_SERVER_AUTHENTICATION_TOKEN').strip().strip("\"")
+        if not server_auth_token or server_auth_token.lower() == "none":
+            if self._is_config_available:
+                server_auth_token = self._config_array["server"]["token"]
