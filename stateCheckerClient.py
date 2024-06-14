@@ -63,7 +63,6 @@ class StateCheckerClient(Thread):
         # Initialize Server connection and authentication.
         self._server_auth_token = self._getServerAuthTokenFromEnvironment()
         if self._is_config_available:
-            self._server_auth_token = os.getenv("STATECHECKER_SERVER_AUTHENTICATION_TOKEN") or self._config_array["server"]["stateCheckUrl"]
             self._server_state_check_url = os.getenv("STATECHECKER_SERVER_STATE_CHECK_URL") or self._config_array["server"]["stateCheckUrl"]
             self._server_backup_check_url = os.getenv("STATECHECKER_SERVER_BACKUP_CHECK_URL") or self._config_array["server"]["backupcheckUrl"]
             self._url = self._server_state_check_url
